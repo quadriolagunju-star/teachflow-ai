@@ -1,7 +1,7 @@
 from google import genai
 from google.genai import types
 import json
-import streanlit as st
+import streamlit as st
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 
