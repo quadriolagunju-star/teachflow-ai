@@ -3,12 +3,12 @@ import json
 import streamlit as st
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
-def generate_lesson_and_quiz(topic, grade_level="SS3", num_questions=5):
+def generate_lesson_and_quiz(topic, level, num_questions=5):
     prompt = f"""
 You are an expert teacher creating classroom-ready materials.
 
 Topic: {topic}
-Student level: {grade_level}
+Student level: {level}
 
 Return ONLY valid JSON (no markdown, no backticks) in this exact structure:
 
