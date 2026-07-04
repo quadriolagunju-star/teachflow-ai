@@ -115,7 +115,7 @@ with tab1:
     
             if st.session_state.get("show_upgrade"):
                 st.markdown("""
-                ### TeachFlow Pro — ₦2,500/month
+                ### TeachFlow Pro — ₦1,000/month
                 - Unlimited PDF & Slides export
                 - Google Drive sync
                 - Priority grading speed
