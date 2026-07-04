@@ -20,7 +20,7 @@ with tab0:
     email = st.text_input("Email")
     subject = st.text_input("Subject you teach", value="Physics")
     onboard_level = st.selectbox("Level", ["JSS1", "JSS2", "JSS3", "SS1", "SS2", "SS3"], key="onboard_level")
-    curriculum = st.selectbox("Curriculum", ["WAEC", "JAMB", "NECO"])
+    curriculum = st.selectbox("Curriculum", ["COMMON-ENTRANCE","BECE","GCE","WAEC", "JAMB", "NECO", "POST-UTME"])
 
     if st.button("Register", type="primary"):
         if not (name and email):
