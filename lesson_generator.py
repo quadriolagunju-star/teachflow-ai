@@ -5,43 +5,48 @@ client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 def generate_lesson_and_quiz(topic, level, num_questions=5):
     prompt = f"""
-You are an expert teacher creating classroom-ready materials.
+    You are an expert teacher creating a complete, classroom-ready lesson plan.
 
-Topic: {topic}
-Student level: {level}
+    Topic: {topic}
+    Student level: {level}
 
-Return ONLY valid JSON (no markdown, no backticks) in this exact structure:
-
-{{
-  "lesson_plan": {{
-    "objectives": ["...", "..."],
-    "key_concepts": ["...", "..."],
-    "explanation": "A clear, well-structured explanation of the topic suitable for the student level.",
-    "real_world_example": "A relatable example connecting the concept to everyday life."
-  }},
-  "quiz": [
+    Return ONLY valid JSON (no markdown, no backticks) in this exact structure:
     {{
-      "question": "...",
-      "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-      "correct_answer": "A",
-      "explanation": "Why this is correct."
+      "lesson_plan": {{
+        "objectives": ["...", "..."],
+        "key_concepts": ["...", "..."],
+        "timings": [
+          {{"segment": "Introduction", "minutes": 5, "activity": "..."}},
+          {{"segment": "Direct instruction", "minutes": 15, "activity": "..."}},
+          {{"segment": "Guided practice", "minutes": 15, "activity": "..."}},
+          {{"segment": "Independent activity", "minutes": 10, "activity": "..."}},
+          {{"segment": "Wrap-up", "minutes": 5, "activity": "..."}}
+        ],
+        "discussion_questions": ["...", "..."],
+        "assessment_ideas": ["...", "..."],
+        "explanation": "A clear, well-structured explanation of the topic suitable for the student level.",
+        "real_world_example": "A relatable example connecting the concept to everyday life."
+      }},
+      "quiz": [
+        {{
+          "question": "...",
+          "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
+          "correct_answer": "A",
+          "explanation": "Why this is correct."
+        }}
+      ]
     }}
-  ]
-}}
 
-Generate exactly {num_questions} quiz questions, multiple choice, increasing in difficulty.
-"""
+    Generate exactly {num_questions} quiz questions, multiple choice, increasing in difficulty.
+    """
+
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
-    raw_text = response.text.strip()
-    if raw_text.startswith("```"):
-        raw_text = raw_text.strip("`")
-        raw_text = raw_text.replace("json", "", 1).strip()
+
+    text = response.text.strip()
     try:
-        return json.loads(raw_text)
+        return json.loads(text)
     except json.JSONDecodeError:
-        print("Could not parse JSON. Raw output:")
-        print(raw_text)
         return None

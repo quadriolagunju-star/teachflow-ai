@@ -3,13 +3,16 @@ from lesson_generator import generate_lesson_and_quiz
 from grading_func import smart_grade_and_decide
 from onboarding import onboard_teacher
 from db import log_feedback 
+from worksheet_generator import generate_worksheet
 from pdf_export import generate_lesson_pdf
+from report_writer import generate_progress_report
+from parent_messages import generate_parent_message
 
 st.set_page_config(page_title="TeachFlow AI", layout="wide")
 st.title("TeachFlow AI")
 st.caption("Lesson plans, quizzes, and instant grading — powered by Gemini")
 
-tab0, tab1, tab2 = st.tabs(["👋 Get Started", "📘 Lesson Planner", "📝 Grade a Script"])
+tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(["👋 Get Started", "📘 Lesson Planner", "📝 Grade a Script","📄 Worksheets", "📝 Progress Report" "Parents' Message" ])
 
 # ---------------- TAB 1: LESSON PLANNER ----------------
 with tab0:
@@ -79,7 +82,19 @@ with tab1:
 
                 st.markdown("### Real-World Example")
                 st.write(lp["real_world_example"])
-
+                   
+                st.markdown("### Lesson Timing & Activities")
+                for seg in lp["timings"]:
+                    st.write(f"**{seg['segment']}** ({seg['minutes']} min): {seg['activity']}")
+                
+                st.markdown("### Discussion Questions")
+                for dq in lp["discussion_questions"]:
+                    st.write("- " + dq)
+                
+                st.markdown("### Assessment Ideas")
+                for ai in lp["assessment_ideas"]:
+                    st.write("- " + ai)
+                    
                 st.markdown("### Quiz")
                 for i, q in enumerate(result["quiz"], 1):
                     st.write(f"**Q{i}: {q['question']}**")
@@ -129,8 +144,6 @@ with tab2:
     st.subheader("Snap or upload a student's answer sheet")
 
     
-
-
     st.caption("Fill in the fields below for strict rubric grading, or leave them blank and let the agent detect everything.")
     
     g_student_name = st.text_input("Student name")
@@ -196,6 +209,63 @@ with tab2:
                     st.success("✅ Strong performance — no action needed.")
             else:
                 st.error("Could not grade this image. Try a clearer photo.")
+                
+ # ---------------- TAB 3: WORKSHEET ----------------           
+with tab3:
+    st.subheader("Generate a worksheet or quiz")
+    ws_topic = st.text_input("Topic", key="ws_topic")
+    ws_source = st.text_area("Or paste text to base questions on (optional)", key="ws_source")
+    ws_level = st.selectbox("Level", ["JSS1", "JSS2", "JSS3", "SS1", "SS2", "SS3"], key="ws_level")
+    ws_formats = st.multiselect("Question types", ["multiple_choice", "short_answer", "fill_in_blank"], default=["multiple_choice"])
+    ws_count = st.slider("Number of questions", 5, 20, 10)
+
+    if st.button("Generate Worksheet", type="primary"):
+        with st.spinner("Generating..."):
+            ws_result = generate_worksheet(
+                topic=ws_topic or None,
+                source_text=ws_source or None,
+                level=ws_level,
+                formats=ws_formats,
+                num_items=ws_count
+            )
+        if ws_result:
+            st.markdown(f"### {ws_result['title']}")
+            for i, q in enumerate(ws_result["questions"], 1):
+                st.write(f"**Q{i}. ({q['type']}):** {q['question']}")
+                for opt in q.get("options", []):
+                    st.write(opt)
+                with st.expander("Show answer"):
+                    st.write(q["answer"])
+        else:
+            st.error("Could not generate worksheet. Try again.")
+            
+      # ---------------- TAB 4: PROGRESS REPORT ----------------      
+with tab4:
+    st.subheader("Write a student progress report")
+    student_name = st.text_input("Student name", key="report_student")
+    teacher_notes = st.text_area("Your rough notes about this student", key="report_notes")
+    if st.button("Generate Report", type="primary"):
+        with st.spinner("Writing..."):
+            report = generate_progress_report(student_name, teacher_notes)
+        if report:
+            st.markdown("### Draft Report")
+            st.write(report)
+        else:
+            st.error("Could not generate report. Try again.")
+         # ---------------- TAB 5: PARENT MESSAGES ----------------    
+with tab5:
+    st.subheader("Draft a parent message")
+    pm_student = st.text_input("Student name", key="pm_student")
+    pm_type = st.selectbox("Message type", ["behavior", "achievement", "meeting_request"])
+    pm_context = st.text_area("What happened / what you want to say", key="pm_context")
+    if st.button("Generate Message", type="primary"):
+        with st.spinner("Drafting..."):
+            pm_result = generate_parent_message(pm_student, pm_type, pm_context)
+        if pm_result:
+            st.markdown(f"**Subject:** {pm_result['subject']}")
+            st.text_area("Email body", pm_result["body"], height=200)
+        else:
+            st.error("Could not draft message. Try again.")
                 
     from retention import run_retention_check
     
