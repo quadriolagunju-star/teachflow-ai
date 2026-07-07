@@ -12,7 +12,7 @@ st.set_page_config(page_title="TeachFlow AI", layout="wide")
 st.title("TeachFlow AI")
 st.caption("Lesson plans, quizzes, and instant grading — powered by Gemini")
 
-tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(["👋 Get Started", "📘 Lesson Planner", "📝 Grade a Script","📄 Worksheets", "📝 Progress Report" "Parents' Message" ])
+tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(["👋 Get Started", "📘 Lesson Planner", "📝 Grade a Script","📄 Worksheets", "📝 Progress Report", "Parents' Message" ])
 
 # ---------------- TAB 1: LESSON PLANNER ----------------
 with tab0:
@@ -108,14 +108,14 @@ with tab1:
                 col1, col2, col3 = st.columns(3)
                 
             with col1:
-                with col1:
-                        pdf_bytes = generate_lesson_pdf(result, subject, topic)
-                        st.download_button(
-                            "📄 Export as PDF",
-                            data=pdf_bytes,
-                            file_name=f"{topic.replace(' ', '_')}_lesson_plan.pdf",
-                            mime="application/pdf"
-                        )
+                
+                pdf_bytes = generate_lesson_pdf(result, subject, topic)
+                st.download_button(
+                    "📄 Export as PDF",
+                    data=pdf_bytes,
+                    file_name=f"{topic.replace(' ', '_')}_lesson_plan.pdf",
+                    mime="application/pdf"
+                )
             with col2:
                 if st.button("📊 Export as Slides"):
                     st.session_state["export_requested"] = "slides"
@@ -135,7 +135,7 @@ with tab1:
                 - Google Drive sync
                 - Priority grading speed
                 """)
-                st.button("Continue to Payment (coming soon)")
+                st.button("Continue to Payment", url="https://paystack.shop/pay/254njogm6u")
             else:
                 st.error("Something went wrong generating the lesson. Try again.")
 
