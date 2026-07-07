@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
 teachflow.db
-temp_upload.jpg".streaamlit/secrets.toml"
+temp_upload.jpg
+.streaamlit/secrets.toml
