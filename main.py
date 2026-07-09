@@ -106,36 +106,36 @@ with tab1:
                 st.markdown("---")
                 st.subheader("Export this lesson")
                 col1, col2, col3 = st.columns(3)
-                
-            with col1:
-                
-                pdf_bytes = generate_lesson_pdf(result, subject, topic)
-                st.download_button(
-                    "📄 Export as PDF",
-                    data=pdf_bytes,
-                    file_name=f"{topic.replace(' ', '_')}_lesson_plan.pdf",
-                    mime="application/pdf"
-                )
-            with col2:
-                if st.button("📊 Export as Slides"):
-                    st.session_state["export_requested"] = "slides"
-            with col3:
-                if st.button("☁️ Save to Google Drive"):
-                    st.session_state["export_requested"] = "drive"
-    
-            if st.session_state.get("export_requested"):
-                st.info("✨ Exports are a **Pro** feature. Upgrade to unlock PDF, Slides, and Google Drive export.")
-                if st.button("Upgrade to Pro"):
-                    st.session_state["show_upgrade"] = True
-    
-            if st.session_state.get("show_upgrade"):
-                st.markdown("""
-                ### TeachFlow Pro — ₦1,000/month
-                - Unlimited PDF & Slides export
-                - Google Drive sync
-                - Priority grading speed
-                """)
-                st.button("Continue to Payment", url="https://paystack.shop/pay/254njogm6u")
+                    
+                with col1:
+                    
+                    pdf_bytes = generate_lesson_pdf(result, subject, topic)
+                    st.download_button(
+                        "📄 Export as PDF",
+                        data=pdf_bytes,
+                        file_name=f"{topic.replace(' ', '_')}_lesson_plan.pdf",
+                        mime="application/pdf"
+                    )
+                with col2:
+                    if st.button("📊 Export as Slides"):
+                        st.session_state["export_requested"] = "slides"
+                with col3:
+                    if st.button("☁️ Save to Google Drive"):
+                        st.session_state["export_requested"] = "drive"
+        
+                if st.session_state.get("export_requested"):
+                    st.info("✨ Exports are a **Pro** feature. Upgrade to unlock PDF, Slides, and Google Drive export.")
+                    if st.button("Upgrade to Pro"):
+                        st.session_state["show_upgrade"] = True
+        
+                if st.session_state.get("show_upgrade"):
+                    st.markdown("""
+                    ### TeachFlow Pro — ₦1,000/month
+                    - Unlimited PDF & Slides export
+                    - Google Drive sync
+                    - Priority grading speed
+                    """)
+                    st.button("Continue to Payment", url="https://paystack.shop/pay/254njogm6u")
             else:
                 st.error("Something went wrong generating the lesson. Try again.")
 
